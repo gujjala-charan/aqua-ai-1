@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AquaAI - Intelligent Farming</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar glass">
+            <div class="brand">
+                <i class="fa-solid fa-water icon-blue"></i>
+                <h2>AquaAI <span class="badge">V2</span></h2>
+            </div>
+            
+            <nav class="nav-menu">
+                <button class="nav-item active" data-view="dashboard">
+                    <i class="fa-solid fa-chart-pie"></i> Dashboard
+                </button>
+                <button class="nav-item" data-view="ponds">
+                    <i class="fa-solid fa-fish"></i> Pond Management
+                </button>
+                <button class="nav-item" data-view="ai">
+                    <i class="fa-solid fa-microscope"></i> AI Analysis
+                </button>
+                <button class="nav-item" data-view="copilot">
+                    <i class="fa-solid fa-robot"></i> Farm Copilot
+                </button>
+            </nav>
+            
+            <div class="status-bar">
+                <div class="indicator" id="api-status-light"></div>
+                <span id="api-status-text">Connecting to API...</span>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-nav glass">
+                <h2 id="page-title">Farm Dashboard</h2>
+            </header>
+
+            <div class="view-container">
+                
+                <!-- 1. Dashboard -->
+                <section id="view-dashboard" class="view active">
+                    <div class="kpi-grid">
+                        <div class="kpi-card glass highlight-blue">
+                            <div class="kpi-top"><span>Active Ponds</span><i class="fa-solid fa-water"></i></div>
+                            <h3 id="dash-ponds">0</h3>
+                        </div>
+                        <div class="kpi-card glass highlight-green">
+                            <div class="kpi-top"><span>Total Fish Count</span><i class="fa-solid fa-fish-fins"></i></div>
+                            <h3 id="dash-fish">0</h3>
+                        </div>
+                        <div class="kpi-card glass highlight-purple">
+                            <div class="kpi-top"><span>Est. Biomass (kg)</span><i class="fa-solid fa-weight-scale"></i></div>
+                            <h3 id="dash-biomass">0</h3>
+                        </div>
+                        <div class="kpi-card glass highlight-red">
+                            <div class="kpi-top"><span>Disease Alerts</span><i class="fa-solid fa-triangle-exclamation"></i></div>
+                            <h3>0</h3>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. Pond Management -->
+                <section id="view-ponds" class="view">
+                    <div class="header-action">
+                        <h3>Your Ponds</h3>
+                        <button class="btn btn-primary" onclick="openModal('addPondModal')">
+                            <i class="fa-solid fa-plus"></i> Add Pond
+                        </button>
+                    </div>
+                    
+                    <div class="table-container glass">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Species</th>
+                                    <th>Fish Count</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pond-table-body">
+                                <tr><td colspan="5" style="text-align: center;">Loading data...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- 3. AI Analysis -->
+                <section id="view-ai" class="view">
+                    <div class="ai-container">
+                        <div class="ai-control glass">
+                            <h3><i class="fa-solid fa-wand-magic-sparkles icon-purple"></i> Run Agent Scan</h3>
+                            <p class="text-sm">Select a pond to run the 7-module AI diagnostic scan (Water Quality, Disease Risk, Growth Forecast, Feeding Strategy).</p>
+                            <form id="ai-scan-form">
+                                <select id="ai-pond-select" class="input dark-input mt-3 mb-3"></select>
+                                <button type="submit" class="btn btn-purple w-100">Initiate Deep Scan</button>
+                            </form>
+                        </div>
+                        
+                        <div class="ai-results glass" id="ai-result-panel" style="display: none;">
+                            <div class="result-header">
+                                <h3>Diagnostic Results</h3>
+                                <span class="badge badge-success" id="res-status">Optimal</span>
+                            </div>
+                            
+                            <div class="diagnostics-grid mt-3">
+                                <div class="diag-item">
+                                    <span><i class="fa-solid fa-droplet"></i> Water Quality</span>
+                                    <strong id="res-ph">pH: --</strong>
+                                    <strong id="res-temp" class="ml-2">Temp: -- °C</strong>
+                                </div>
+                                <div class="diag-item">
+                                    <span><i class="fa-solid fa-chart-line"></i> Growth Forecast</span>
+                                    <strong id="res-harvest">-- Days left</strong>
+                                </div>
+                                <div class="diag-item">
+                                    <span><i class="fa-solid fa-bowl-food"></i> Recommended Feed</span>
+                                    <strong id="res-feed">-- kg</strong>
+                                </div>
+                                <div class="diag-item">
+                                    <span><i class="fa-solid fa-virus"></i> Disease Vision</span>
+                                    <strong id="res-disease">--</strong>
+                                </div>
+                            </div>
+                            <div class="diag-notes mt-3" id="res-notes"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. Farm Copilot -->
+                <section id="view-copilot" class="view">
+                    <div class="chat-container glass">
+                        <div class="chat-header">
+                            <i class="fa-solid fa-robot icon-purple"></i>
+                            <div>
+                                <h3>AquaAI Copilot</h3>
+                                <p>LangChain Assistant connecting you to your farm data.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="chat-history" id="chat-history">
+                            <div class="msg ai">
+                                <div class="bubble">Hello! I'm here to translate complex pond diagnostics into plain English. Try asking me "Why are my fish dying?" or "When should I harvest?"</div>
+                            </div>
+                        </div>
+                        
+                        <div class="chat-input-area">
+                            <form id="chat-form">
+                                <input type="text" id="chat-input" class="input dark-input" placeholder="Ask your copilot..." autocomplete="off" required>
+                                <button type="submit" class="btn btn-purple"><i class="fa-solid fa-paper-plane"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+                
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="addPondModal" class="modal-overlay">
+        <div class="modal glass">
+            <h3>Register New Pond</h3>
+            <form id="add-pond-form">
+                <input type="text" id="p-name" class="input mb-2 mt-3" placeholder="Pond Name (e.g. Tank A)" required>
+                <input type="text" id="p-species" class="input mb-2" placeholder="Species (e.g. Tilapia)" required>
+                <input type="number" id="p-count" class="input mb-3" placeholder="Initial Fish Count" required>
+                
+                <div class="flex-row">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('addPondModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary" style="flex:1">Save Pond</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
